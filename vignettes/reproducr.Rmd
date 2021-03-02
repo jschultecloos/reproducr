@@ -1,0 +1,429 @@
+---
+title: "Drafting and publishing reproducible scientific articles with R Markdown"
+output: rmarkdown::html_vignette
+description: "reproducr"
+vignette: >
+  %\VignetteIndexEntry{Drafting and publishing reproducible scientific articles with R Markdown}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+
+pacman::p_load(
+  ggplot2,
+  showtext, 
+  palmerpenguins, 
+  magick, 
+  here, 
+  DT, 
+  leaflet
+)
+
+knitr::opts_chunk$set(comment = "#>", 
+                      collapse = TRUE, 
+                      message = FALSE, 
+                      warning = FALSE,
+                      fig.path = 'figs/fig-')
+```
+
+<a href='https://github.com/jschultecloos/reproducr'> <img src="logo.png" align="right" height="139"/></a>
+
+# The basics
+
+## Introduction
+
+As demands for computational reproducibility in science are increasing, tools for literate programming are becoming ever more relevant. R Markdown offers a framework to generate reproducible research in various output formats. 
+
+
+The `reproducr` package allows users without any prior knowledge of R Markdown to implement reproducible research practices in their scientific workflows. The `reproducr` package offers an integrated-file solution that guides researchers from draft to final paper submission. 
+
+You enjoy full flexibility to knit your document to a polished and well-formatted HTML that includes all your explorative analysis and the interactive elements of your research output. This feature is particularly useful while **drafting a research paper** or when writing up **blog posts to communicate your results** to a wider audience. At the same time, you can knit your document to a polished and **submission-ready** PDF manuscript which is optimised for scholarly use and can optionally be **blinded for review**. 
+
+When writing your paper and your code, simply wrap the parts of the paper that are exclusive to one output format with three colons `::: {.not-in-format .latex}` and the respective part of the document will not be included in $\LaTeX{}$ output. You can also make the **code evaluation** conditional on the output format by asking `knitr` to conditionally evaluate your code only when the output is HTML: `eval=knitr::is_html_output()`.
+
+
+## Markdown syntax
+
+Markdown is so popular because it is a human-readable syntax, which is incredibly straightforward to understand. You can add **bold** content by adding two asterisks around the word that you want to emphasise (`**bold**`), whereas text will be shown in *italics* by wrapping it in simple asterisks (`*italics*`). You introduce sections with a hashtag (`# A section` or `## A level-two section`). 
+
+If you do not specify a section label, Pandoc will automatically assign a label based on the title of your header and an algorithm that converts all alphabetic characters to lower case, removes all non-alphanumeric characters other than underscores, hyphens and periods and replaces spaces with hyphens. The section called `## My exciting introduction!`, for instance, will be labelled as `my-exciting-introduction`. For more details, see the [Pandoc manual](https://pandoc.org/MANUAL.html#extension-auto_identifiers). If you wish to add a manual label to a header, you may add `{#mylabel}` to the end of the section header.
+
+Links are included by wrapping the text in square brackets and including the URL in parentheses, e.g. `a [link](/url)`. You can include lists with simple bullet points or numbers for a numbered list. You can also include footnotes in your text, e.g. `^[An important footnote.]`.
+
+
+````
+- first item 
+- second item
+- third item
+````
+
+## Code chunks 
+
+The key to literate programming are **code chunks**, which are embedded in your manuscript written in Markdown. While the default programming engine used in R Markdown documents is the statistical programming software R, a number of other engines are also supported. A code chunk opens with three backticks (` ```{r my-code-chunk-label} `) and closes with three backticks (` ``` `). You can easily insert a code chunk using the keyboard shortcut `Ctlr+Alt+I` in the R Studio IDE. It is a good practice to add a label for each code chunk, [using only letters, numbers, or dashes while avoiding any other special characters](https://bookdown.org/yihui/rmarkdown/r-code.html). 
+
+Note that each code chunk needs to have a **unique name** within your document. 
+
+The `reproducr` package displays all code by default (folded in the HTML output) while it does not display any code by default in the PDF output. If you would like to change this behavior, you can change the respective global `knitr` chunk option, for instance, by: `knitr::opts_chunk$set(echo = FALSE)`, which would hide all code -- even in the HTML output. 
+
+
+## YAML header
+
+In the [`YAML`](https://en.wikipedia.org/wiki/YAML) header of your document, you can specify metadata that are central to your scientific manuscript, like the title of your document, the names of the authors, their affiliations, or the abstract of the manuscript. Most of these variables have their dedicated metadata field, e.g. `title: 'An exciting new study in the field of xyz.'`. The `YAML` header starts and ends with three dashes `---`, like this: 
+
+
+```yaml
+---
+documentclass: article
+title: 'An exciting new study in the field of xyz.'
+author:
+  - name: "Reproducible Researcher"
+    institute: [reprouniversity]
+    correspondence: true
+    email: reproducible.researcher@reprouniversity.edu
+date: "`r lubridate::today()`"
+institute:
+  - reprouniversity:
+      name: Reproducible University.
+output: 
+  reproducr::reproducr_manuscript: 
+    blinded: false 
+---
+```
+
+
+You need to pay attention to indentation when modifying any parts of the `YAML` header. Currently, the RStudio IDE does not include a `YAML` linter, but you can either use any [online `YAML` linter](https://codebeautify.org/yaml-validator) to check the validity of your `YAML` code, rely on a [python-based application](https://yamllint.readthedocs.io/), or work with a different IDE, e.g. PyCharm together with its R Markdown Plugin.
+
+R Markdown also stores the values of the metadata in an object `metadata`. Therefore, you can also include any information in the literate programming of your document, for instance, to print out the title of your document with `rmarkdown::metadata$title` (R Markdown will compile this to show the title of your document.
+
+
+
+# Explorative stage
+
+## Explorative data analysis 
+
+In the stage of explorative data analysis, you may want to dynamically explore your data and research output in interactive tables, graphs, or maps. 
+
+The `reproducr` package allows you to include any HTML-based interactive elements in your `reproducr::reproducr_draft` output. 
+
+
+### Interactive tables
+
+
+```{r interactive-table-datatable, eval=knitr::is_html_output(), echo=TRUE}
+
+datatable = DT::datatable(
+  penguins, 
+  filter = 'top', 
+  options = list(pageLength = 5, 
+                 lengthMenu = c(5, 10)), 
+  colnames = c('Species', 'Island', 'Bill Length', 'Bill Depth', 
+               'Flipper Length', 'Body Mass', 'Sex', 'Year')
+  )
+datatable
+```
+
+
+
+### Interactive graphs
+
+In the explorative stage of data analysis, you can rely on interactive graphs, e.g., with the [`ggiraph`](https://davidgohel.github.io/ggiraph/index.html) package, which allows us to add tooltips, animations, or even JavaScript actions to **existing `ggplot` objects**. 
+
+
+```{r ggplot, fig.cap="Body mass and flipper length of penguins (static plot).", include = knitr::is_latex_output()}
+
+pacman::p_load(ggplot2, 
+               showtext)
+
+
+## add a font from google fonts
+font_add_google(
+  name = "Raleway",
+  family = "Raleway"
+  )
+ggplot_font = "Raleway"
+
+
+## set-up the ggplot default theme of the document
+ggplot2::theme_set(
+  theme_bw() +
+    theme(text = element_text(family = ggplot_font)) +
+    theme(
+      plot.title = element_text(
+        hjust = 0.5
+        ),
+      plot.subtitle = element_text(
+        hjust = 0.5
+        )
+      )
+)
+
+scatter_mass_flipper <- ggplot(
+  data = penguins,
+  aes(
+    x = flipper_length_mm,
+    y = body_mass_g
+  )
+) +
+  geom_point(aes(
+    color = species,
+    shape = species
+  ),
+  size = 3,
+  alpha = 0.8
+  ) +
+  scale_color_brewer(palette = "Dark2") +
+  labs(
+    title = "Penguin size, Palmer Station LTER",
+    subtitle = "Flipper length and body mass for Adélie, Chinstrap and Gentoo penguins",
+    x = "Flipper length (mm)",
+    y = "Body mass (g)",
+    color = "Penguin species",
+    shape = "Penguin species"
+  ) 
+
+
+
+```  
+
+`r icon::fa("long-arrow-alt-right")` **Tip**: Create your static `ggplot` object in one code chunk and specify a chunk option to include this chunk only if your output is $\LaTeX{}$ with `include=knitr::is_latex_output()`. 
+ 
+In a second code chunk, you can then further augment your `ggplot` with `ggiraph` without having to repeat the `ggplot` code. For this chunk, in turn, simply specify the chunk option `include=knitr::is_html_output()`. 
+
+
+```{r ggiraph-animate, fig.cap="Body mass and flipper length of penguins (interactive plot).", include=knitr::is_html_output()}
+
+pacman::p_load(ggiraph)
+
+# add interactive tooltip to the scatter_mass_flipper (static) ggplot object
+scatter_mass_flipper <- scatter_mass_flipper + 
+  geom_point_interactive(
+    aes(tooltip = paste0("<b>Flipper Length: </b>",
+                         round(flipper_length_mm,
+                               digits=2)
+                         )
+        ),
+    size=1)
+
+girafe(ggobj = scatter_mass_flipper, 
+       width_svg=7, 
+       height_svg=3.5)
+
+```
+
+
+### Interactive maps
+
+In the HTML output of the `reproducr` package, we can also include any other interactive content, e.g., a `leaflet` map. 
+
+
+```{r leaflet-map, include=knitr::is_html_output(), }
+pacman::p_load(leaflet)
+
+leaflet(height=200,
+        width=500) %>% 
+  addTiles() %>% 
+  addMarkers(lat=48.15002,
+             lng=11.59428,
+             popup="LMU Munich") %>%
+  setView(lat=48.15002,
+          lng=11.59428, zoom=10)
+
+
+```
+
+
+
+## Date stamps
+
+The `reproducr` package allows you to knit your document to an output file that contains a date stamp at the end of the document's name. 
+
+
+```yaml
+---
+knit: reproducr::knit_with_datestamp
+output: 
+  reproducr::reproducr_manuscript: 
+    blinded: false
+  reproducr::reproducr_draft
+---
+```
+
+The name of your `.Rmd` file will remain unchanged, allowing you to easily keep track of any changes in your file with version control tools like Git.
+
+
+# Dissemination stage
+
+## Scholarly author information 
+
+### Author affiliations 
+
+The `reproducr` template offers extended functionality for scientific writing by providing additional fields that are commonly used in academia, like the affiliation of authors and information about the corresponding author in case of several authors. 
+
+### Correspondence and ORCID
+
+The `reproducr` template integrates fields that will only be used in the PDF output (e.g., `equal_contributor`) with fields that will only be used in the HTML output (e.g., `affiliation_url`, `orcid_id`).
+
+```{r yaml-author-information, eval=FALSE, echo=TRUE}
+
+author:
+  - name: "Julia Schulte-Cloos"
+    institute: [gsilmu, reprouniversity]
+    correspondence: true
+    equal_contributor: "yes"
+    email: julia.schulte@lmu.de
+    url: https://jschultecloos.github.io
+    affiliation: Geschwister Scholl Institute of Political Science, LMU Munich
+    affiliation_url: https://www.gsi.uni-muenchen.de/
+    orcid_id: 0000-0001-7223-3602
+  - name: "Reproducible Researcher - ReproducR"
+    institute: reprouniversity
+    equal_contributor: "yes"
+    url: https://makescience.reproducible
+    affiliation: Reproducibility
+    affiliation_url: https://makescience.reproducible
+
+```
+
+
+## Layout and fonts
+
+### Layout 
+
+$\LaTeX{}$ does respect the layout and aesthetics of documents -- and you should keep doing so, too, when knitting to a $\LaTeX{}$ based PDF document via the `reproducr::reproducr_manuscript` output format. 
+
+Make sure to specify a `documentclass` in your YAML header. Otherwise, R Markdown enforces page margins of 1 inch, which is hardly [optimal for readability](https://en.wikibooks.org/wiki/LaTeX/Page_Layout#Margins). 
+
+
+```yaml
+---
+documentclass: 'scrartcl'
+linestretch: 1.25
+indent: true
+output: 
+  reproducr::reproducr_manuscript: 
+    keep_tex: yes 
+---
+```
+
+
+### Integration of fonts
+
+The `reproducr` manuscript relies on the Cochineal font family as implemented in the [`cochineal` $\LaTeX{}$ package](https://www.ctan.org/tex-archive/fonts/cochineal/) and the [`newtxmath` $\LaTeX{}$ package](https://www.ctan.org/tex-archive/fonts/newtxmath) loaded with the cochineal option for optimal corresponding math support. 
+
+To integrate the fonts in the graphs of your document, e.g. created with `ggplot`, the `reproducr` package relies on the [`showtext` package](https://github.com/yixuan/showtext) and the `ragg_png` graphic device of the [`ragg` package](https://ragg.r-lib.org/). 
+
+`r icon::fa("long-arrow-alt-right")` **Tip**: create two chunks that specify a global `ggplot` font and evaluate each of them conditionally only when the output for $\LaTeX{}$ or HTML output by adding the `knitr` chunk option `eval=knitr::is_latex_output()` or `eval=knitr::is_html_output()`.
+
+The code below shows how you can load Google Crimson Text font, matching the Cochineal font family used in the `reproducr` package for PDF output and store it as `ggplot_font`. In a second chunk, you would do the same, but instead specify a font optimised for HTML output, which you would only evaluate if the output format is HTML. 
+
+
+```{r set-ggplot-font-latex, echo=TRUE, eval=FALSE}
+
+pacman::p_load(ggplot2, 
+               showtext)
+
+
+## add a font from google fonts
+font_add_google(
+  name = "Crimson Text",
+  family = "Crimson Text"
+  )
+ggplot_font = "Crimson Text"
+
+
+```
+
+```{r global-ggplot-options}
+
+## set-up the ggplot default theme of the document
+ggplot2::theme_set(
+  theme_bw() +
+    theme(text = element_text(family = ggplot_font)) +
+    theme(
+      plot.title = element_text(
+        hjust = 0.5
+        ),
+      plot.subtitle = element_text(
+        hjust = 0.5
+        )
+      )
+)
+
+```
+
+
+## Blinded manuscript
+
+The `reproducr` package allows you to blind your manuscript and exclude any author information, which may be necessary when you submit your research article for review.
+
+
+```yaml
+---
+output: 
+  reproducr::reproducr_manuscript: 
+    blinded: false 
+---
+```
+
+```{r blinded-manuscript, out.width="70%", fig.align="center", echo=FALSE, message=FALSE, warning=FALSE}
+pacman::p_load(magick, 
+               here)
+blinded <- magick::image_read(here::here("man/figures/titlepage-blinded.PNG"))
+blinded
+```
+
+
+
+## Bibliography and Reference Management
+
+### References for main body and appendix
+
+The `reproducr` package allows you to include two **separate bibliographies**, one after the main body of the manuscript including all references of the main article and another bibliography at the end of the appendix, including only all of those references included in the appendix. This feature is currently not enabled in the standard R Markdown output formats.
+
+In the YAML header, specify the `section-refs-bibliography` variable to refer to your `.bib` file. 
+
+
+
+
+```yaml
+---
+output:
+  reproducr::reproducr_manuscript:
+    blinded: false
+#Management of different bibliographies in PDF Manuscript
+reference-section-title: 'References'
+section-refs-level: 1
+section-refs-bibliography: 'literature.bib'
+# Management of Citation Styles
+csl: 'https://bit.ly/3khj0ZL'
+---
+```
+
+Note that the `csl` field does not need to link to a `.csl` file stored on your local machine, but can also link to a URL that contains the most recent version of the respective citation language style (CSL) that you use. In the example above, the link directs to a `csl` stored in the official repository for Citation Style Language (CSL) citation styles.  
+
+Because R Markdown 'forces' the Pandoc `--citeproc` option when you still specify the usual `bibliography` field in the `YAML` header and hard-codes this option as the last command into the Pandoc command line, currently, you need to comment any normal `bibliography` field out of the `YAML` header if you knit to `reproducr::reproducr_manuscript` and would like to include two separate bibliographies in your document. Future releases of this package will find a work-around for this somewhat unclean R Markdown behavior. Comments and contributions are welcome!  
+
+### Indentation of the references 
+
+The [Pandoc $\LaTeX{}$ default template](https://github.com/jgm/pandoc-templates/blob/master/default.latex) sets the hanging indent of the references to 1.5em in case your `.csl` file features a hanging indent. The Pandoc default `.csl` file is `chicago-author-date`, which has a hanging-indent style. There are also non-hanging-indent styles like [`harvard-cite-them-right.csl`](https://raw.githubusercontent.com/citation-style-language/styles/master/harvard-cite-them-right.csl). 
+
+
+### Default citation style language (CSL) and custom CSL files  
+
+The YAML metadata field `csl` can link to a file stored on your local machine or to a URL, which will be fetched via HTTP. If the file you specify on your computer cannot be found relative to the working directory, Pandoc will first look for it in the `resource path` (the default resource path is [set to be the working directory](https://pandoc.org/MANUAL.html#option--resource-path)) and finally in the csl subdirectory of the pandoc user data directory. 
+
+
+Remember that if your document specifies a [csl](https://citationstyles.org/) [style](https://www.zotero.org/styles), Pandoc will convert Markdown references, i.e., `@palmerdata.2020`, to 'hard-coded' text and a hyperlink to the reference section in your document. 
+
+### Natbib and Biblatex 
+
+If you prefer to work with Natbib or Biblatex for references in $\LaTeX{}$ output, you may specify the `natbib` or `biblatex` option in the YAML field. 
+
+
+# Contributions
+
+Contributions to the `reproducr` package are welcome! 
+
+
+

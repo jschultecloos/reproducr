@@ -1,0 +1,4 @@
+name: reproducr
+description: >
+   Drafting and publishing reproducible scientific articles with R Markdown
+create_dir: FALSE

@@ -1,0 +1,16 @@
+% we can add any custom LaTeX commands that should be included just after \begin{document}
+
+\thispagestyle{empty}
+\setcounter{page}{0}
+
+
+%redefine CSLReferences to end with a new page
+\ifdefined\CSLReferences
+\let\oldCSLReferences\CSLReferences
+\let\endoldCSLReferences\endCSLReferences
+\renewenvironment{CSLReferences}{\oldCSLReferences}{\endoldCSLReferences\newpage}%
+\else
+\message{no command \string\CSLReferences}%
+\fi
+
+

@@ -1,0 +1,15 @@
+citHeader("To cite reproducr in publications use:")
+
+citEntry(
+  entry    = "Manual",
+  title    = "ReproducR: Drafting and publishing reproducible scientific articles with R Markdown",
+  author   = "Schulte-Cloos, Julia",
+  year     = "2021",
+  note    = "R package version 0.1",
+  url      = "https://github.com/jschultecloos/reproducr",
+  textVersion = paste(
+
+  )
+)
+
+

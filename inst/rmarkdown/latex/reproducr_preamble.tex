@@ -1,0 +1,36 @@
+\usepackage{lipsum}
+\usepackage{pdflscape}
+\usepackage{float} 
+\floatplacement{figure}{tb}
+\floatplacement{table}{tb}
+
+\usepackage[p,osf]{cochineal}
+\usepackage[defaultsans]{lato}
+
+\usepackage[cochineal,bigdelims,cmintegrals,vvarbb]{newtxmath}
+\usepackage[zerostyle=c,scaled=.94]{newtxtt}
+\usepackage[cal=boondoxo]{mathalfa}
+
+\usepackage[labelfont=bf]{caption}
+\usepackage{setspace}
+
+%redefine abstract environment
+\renewenvironment{abstract}
+{\vfill
+	\begin{center}
+		\bfseries \abstractname
+	\end{center}
+	\list{}{
+		\setstretch{1}
+		\setlength{\leftmargin}{2cm}%
+		\setlength{\rightmargin}{\leftmargin}%
+	}%
+	\item\relax}
+{\endlist \vfill}
+
+
+%redefine the thanks command
+\makeatletter
+\def\thanks#1{\protected@xdef\@thanks{\@thanks
+		\protect\footnotetext{#1}}}
+\makeatother

@@ -1,0 +1,470 @@
+---
+title: "ReproducR - Drafting and publishing reproducible scientific articles with R Markdown"
+author:
+  - name: "Reproducible Researcher - ReproducR"
+    institute: [gsilmu, reprouniversity]
+    equal_contributor: "yes"
+    url: https://makescience.reproducible
+    affiliation: Reproducibility
+    affiliation_url: https://makescience.reproducible
+    orcid_id: 0000-1111-1111-0000
+institute:
+  - gsilmu:
+      name: Geschwister Scholl Institute of Political Science, Ludwig Maxmilian University of Munich, Germany.
+  - reprouniversity:
+      name: Reproducible University.
+documentclass: 'scrartcl'
+linestretch: 1
+#knit: reproducr::knit_with_datestamp
+output:
+  reproducr::reproducr_manuscript:
+    blinded: false
+    keep_tex: true
+  reproducr::reproducr_draft:
+    toc: true
+    toc_depth: 3
+always_allow_html: true
+date: "`r lubridate::today()`"
+thanks: "The acknowledgments go to everyone involved in creating free and open software."
+
+# Management of separate bibliographies in PDF Manuscript
+reference-section-title: 'References'
+section-refs-level: 1
+section-refs-bibliography: 'literature.bib'
+
+# Management of bibliography for HTML
+# bibliography: 'literature.bib'
+
+# Management of Citation Styles
+csl: 'https://bit.ly/3khj0ZL'
+---
+
+```{r setup, include=FALSE}
+
+pacman::p_load(
+  ggplot2,
+  tidyverse,
+  modelsummary,
+  kableExtra,
+  palmerpenguins, 
+  DT, 
+  leaflet, 
+  ggiraph, 
+  showtext)
+
+
+```
+
+# Abstract
+
+As demands for computational reproducibility in science are increasing, tools for literate programming are becoming ever more relevant. R Markdown offers a framework to generate reproducible research in various output formats. I present a new package, `reproducr`, that allows users without any prior knowledge of R Markdown to implement reproducible research practices in their scientific workflows. The `reproducr` package offers an integrated-file solution that guides researchers from draft to final paper submission. While in the stage of explorative analysis and when focusing on content only, researchers may rely on the 'draft mode' of the `reproducr` package that knits to HTML and allows them to interactively explore their data. When in the stage of research dissemination and when focusing on the presentation of results, in contrast, researchers may rely on the 'manuscript mode' that knits to PDF and allows them to circulate a publication-ready version of their working paper or submit it (blinded) for review.
+
+
+# `r rmarkdown::metadata$title`
+
+
+## Introduction
+
+As demands for computational reproducibility in science are increasing, tools for literate programming are becoming ever more relevant. R Markdown offers a framework to generate reproducible research in various output formats. The `reproducr` package allows users without any prior knowledge of R Markdown to implement reproducible research practices in their scientific workflows. The `reproducr` package offers an integrated-file solution that guides researchers from draft to final paper submission. You enjoy full flexibility to knit your document to a polished and well-formatted HTML that includes all your explorative analysis and the interactive elements of your research output. This feature is particularly useful while **drafting a research paper** or when writing up **blog posts to communicate your results** to a wider audience. At the same time, you can knit your document to a polished and **submission-ready** PDF manuscript which is optimised for scholarly use and can optionally be **blinded for review**. When writing your paper and your code, simply wrap the parts of the paper that are exclusive to one output format with three colons `::: {.not-in-format .latex}` and the respective part of the document will not be included in LaTeX output. You can also make the **code evaluation** conditional on the output format by asking `knitr` to conditionally evaluate your code only when the output is HTML: `eval=knitr::is_html_output()`.
+
+
+## Integrating empirical analyses
+
+The key to literate programming [@Knuth.1984] are **code chunks**, which are embedded in your manuscript written in Markdown. While the default programming engine used in R Markdown documents is the statistical programming software R, a number of other engines are also supported. A code chunk opens with three backticks (` ```{r my-code-chunk-label} `) and closes with three backticks (` ``` `). You can easily insert a code chunk using the keyboard shortcut `Ctlr+Alt+I` in the RStudio IDE. It is a good practice to add a label for each code chunk, [using only letters, numbers, or dashes while avoiding any other special characters](https://bookdown.org/yihui/rmarkdown/r-code.html). Note that each code chunk needs to have a **unique name** within your document. The `reproducr` package displays all code by default (folded in the HTML output) while it does not display any code by default in the PDF output. If you would like to change this behavior, you can change the respective global `knitr` chunk option, for instance, by: `knitr::opts_chunk$set(echo = FALSE)`, which would hide all code -- even in the HTML output. In the stage of explorative data analysis, you may want to dynamically explore your data and research output in interactive tables, graphs, or maps. The `reproducr` package allows you to include any HTML-based interactive elements in your `reproducr::reproducr_draft` output. The following subsection showing an interactive table (as HTMLwidget generated with the `DT` package) will only be included in the `reproducr::reproducr_draft` mode. 
+
+
+
+### Interactive tables with `DT` {#interactive-tables .not-in-format .latex}
+
+
+::: {.not-in-format .latex}
+    
+This interactive `DT` table [@Xie.2020a] and this text will not be included in our document when we knit to PDF manuscript mode with `reproducr::reproducr_manuscript`.
+
+
+```{r interactive-table-datatable, eval=knitr::is_html_output(), echo=TRUE}
+
+datatable = DT::datatable(
+  penguins, 
+  filter = 'top', 
+  options = list(pageLength = 5, 
+                 lengthMenu = c(5, 10)), 
+  colnames = c('Species', 'Island', 'Bill Length', 'Bill Depth', 
+               'Flipper Length', 'Body Mass', 'Sex', 'Year')
+  )
+datatable
+```
+
+
+:::
+
+### Graphs with `ggplot` and `ggiraph`
+
+We rely on the [`showtext` package](https://github.com/yixuan/showtext) [@Qiu.2020] to load [google fonts](https://fonts.google.com/) that we would like to use in our `ggplot` [@Wickham.2016] annotations. This allows us to create graphs that match the text font in our manuscript. With some additional 'output-conditional' evaluation of the `knitr` chunk that loads the google font, we can easily rely on two different fonts in our graphs depending on whether our manuscript is compiled to HTML or PDF.   
+
+```{r set-ggplot-font-html, eval=knitr::is_html_output()}
+
+## add a font from google fonts
+font_add_google(
+  name = "Fira Sans",
+  family = "Fira Sans"
+)
+
+ggplot_font = "Fira Sans"
+
+```
+
+```{r set-ggplot-font-latex, eval=knitr::is_latex_output()}
+
+## add a font from google fonts
+font_add_google(
+  name = "Crimson Text",
+  family = "Crimson Text"
+  )
+
+ggplot_font = "Crimson Text"
+
+```
+
+
+```{r theme-set-ggplot}
+
+
+ggplot2::theme_set(
+  theme_bw() +
+    theme(text = element_text(family = ggplot_font)) +
+    theme(
+      plot.title = element_text(
+        hjust = 0.5
+        ),
+      plot.subtitle = element_text(
+        hjust = 0.5
+        )
+      )
+)
+
+```
+
+We create a scatter plot using `ggplot` that shows the body mass (y-axis) and flipper length (x-axis) of three different penguin species included in the penguin dataset by @palmerdata.2020. 
+
+```{r ggplot, fig.cap="Body mass and flipper length of penguins (static plot).", include = knitr::is_latex_output()}
+
+
+scatter_mass_flipper <- ggplot(
+  data = penguins,
+  aes(
+    x = flipper_length_mm,
+    y = body_mass_g
+  )
+) +
+  geom_point(aes(
+    color = species,
+    shape = species
+  ),
+  size = 3,
+  alpha = 0.8
+  ) +
+  scale_color_brewer(palette = "Dark2") +
+  labs(
+    title = "Penguin size, Palmer Station LTER",
+    subtitle = "Flipper length and body mass for Adélie, Chinstrap and Gentoo penguins",
+    x = "Flipper length (mm)",
+    y = "Body mass (g)",
+    color = "Penguin species",
+    shape = "Penguin species"
+  ) 
+
+scatter_mass_flipper
+
+```  
+
+In HTML output, we can also rely on interactive graphs created with `ggplot` and [`ggiraph`](https://davidgohel.github.io/ggiraph/index.html), which allows us to add tooltips, animations, or even JavaScript actions to our existing `ggplot` objects. In our example, we use a tooltip that displays the exact flipper length of each penguin in the data when hovering over the data point in the scatter plot. As we would only like to include the results (i.e., the graph) of our interactive scatter plot in the HTML version of our manuscript, we specify the `include` chunk option to take on the value `FALSE` if the output format is HTML. In the next code chunk, we further augment the `ggplot` with `ggiraph` without having to repeat our code from above. The HTML output of the `reproducr` package only shows the interactive `ggiraph` version of the Figure.   
+
+
+```{r ggiraph-animate, fig.cap="Body mass and flipper length of penguins (interactive plot).", eval=knitr::is_html_output()}
+
+scatter_mass_flipper = scatter_mass_flipper + 
+  geom_point_interactive(
+    aes(tooltip = paste0("<b>Flipper Length: </b>",
+                         round(flipper_length_mm,
+                               digits=2)
+                         )
+        ),
+    size=1)
+
+girafe(ggobj = scatter_mass_flipper, 
+       width_svg=7, 
+       height_svg = 4)
+
+```
+
+
+
+### Regression tables with `modelsummary`
+
+`modelsummary` [@Arel-Bundock.2020] is a very powerful package to present regression tables in several different output formats. Depending on our preferred table styling package, we can chose among different output formats and then further style the regression table according to our personal needs. In the example below, we use `kableExtra` to style the table.
+
+```{r pulse-data-regression-table}
+
+url <- 'https://vincentarelbundock.github.io/Rdatasets/csv/Stat2Data/Pulse.csv'
+pulse_data <- read_csv(url) %>%
+  select(-X1)
+
+
+models <- list(
+  "M1" = lm(Rest ~ Smoke + Exercise + Wgt + Sex,
+            data = pulse_data),
+  "M2" = lm(Rest ~ Smoke*Exercise + Wgt + Sex,
+            data = pulse_data),
+  "M3" = lm(Active ~ Smoke + Exercise + Wgt + Sex,
+            data = pulse_data),
+  "M4" = lm(Active ~ Smoke*Exercise + Wgt + Sex,
+            data = pulse_data)
+)
+
+# report only basic goodness-of-fit statistics
+gm <- gof_map %>%
+  mutate(omit = case_when(
+    raw == "r.squared" | raw == "nobs" ~ FALSE,
+    TRUE ~ TRUE)
+  ) %>%
+  arrange(desc(raw))
+
+
+reg_table <- modelsummary(
+  models,
+  title = "Resting and active pulse rates as a function of sex, weight, exercise, and smoking habits among students",
+  stars = TRUE,
+  # report only basic goodness-of-fit stats
+  gof_map = gm
+  )
+
+reg_table %>%
+  # column labels
+  add_header_above(c(" " = 1,
+                     "Resting Pulse" = 2,
+                     "Active Pulse" = 2)) %>%
+  # footnote
+  add_footnote("Dataset: 'Pulse Rates and Exercise' from the Stat2Data package.",
+               notation = "none"
+  ) 
+
+```
+
+
+
+
+## A longer blindtext section {#blindtext .not-in-format .html}
+
+
+```{=latex}
+
+\lipsum
+
+```
+
+
+# Appendix 
+
+## Advanced literate programming
+
+### Literate programming in figure captions
+
+Sometimes, we would like to include the result of a specific evaluated code in the caption of a figure or a table. We can achieve this, by making use of the `knitr` code chunk option `eval.after`, which allows us to specify that the caption of our Figure should be evaluated only **after** the respective code chunk was evaluated by R. As a matter of fact, the default `eval.after` chunk option is set to include `fig.cap` [@Xie.2016]. In our example `ggplot`, we might, for instance, include the overall number of penguins that are included in the dataset to our earlier `ggplot`. 
+
+
+```{r literate-prog-caption, eval.after="fig.cap", fig.cap = literate_prog_caption}
+
+# create the full string of the figure caption providing information about the number of penguins of each species. 
+
+literate_prog_caption = paste0(
+  "Flipper length and body mass for Adélie (N = ", 
+  nrow(penguins %>% filter(species=="Adelie")),
+  "), Chinstrap (N = ", 
+  nrow(penguins %>% filter(species=="Chinstrap")),
+  ") and Gentoo (N = ", 
+  nrow(penguins %>% filter(species=="Gentoo")),
+  ") penguins."
+  )
+
+scatter_mass_flipper
+
+```
+
+## LaTeX-specific environments 
+
+The 'LaTeX Div' allows us to include LaTeX environments, like `\begin{center} some centered text. \end{center}` into our document by including a LaTeX-specific environment by three colons and the environment that we wish to include specified as an attribute (e.g. `{.center data-latex=""}`) of the device.
+
+
+::: {.landscape data-latex=""}
+
+## Landscape pages
+
+We can also include landscape pages, which may be particularly useful in an appendix to include additional tables with many different models. 
+
+
+```{r modelsummary-wide-table}
+
+
+models <- list(
+  "M5" = lm(Rest ~ Smoke + Exercise + Wgt,
+            data = pulse_data %>% 
+              filter(Sex==0)),
+  "M6" = lm(Rest ~ Smoke*Exercise + Wgt,
+            data = pulse_data %>% 
+              filter(Sex==0)),
+  "M7" = lm(Active ~ Smoke + Exercise + Wgt,
+            data = pulse_data %>% 
+              filter(Sex==0)),
+  "M8" = lm(Active ~ Smoke*Exercise + Wgt,
+            data = pulse_data %>% 
+              filter(Sex==0)),
+  "M9" = lm(Rest ~ Smoke + Exercise + Wgt,
+            data = pulse_data %>% 
+              filter(Sex==1)),
+  "M10" = lm(Rest ~ Smoke*Exercise + Wgt,
+            data = pulse_data %>% 
+              filter(Sex==1)),
+  "M11" = lm(Active ~ Smoke + Exercise + Wgt,
+            data = pulse_data %>% 
+              filter(Sex==1)),
+  "M12" = lm(Active ~ Smoke*Exercise + Wgt,
+            data = pulse_data %>% 
+              filter(Sex==1))
+  )
+
+
+# report only basic goodness-of-fit statistics
+gm <- gof_map %>%
+  mutate(omit = case_when(
+    raw == "r.squared" | raw == "nobs" ~ FALSE,
+    TRUE ~ TRUE)
+  ) %>%
+  arrange(desc(raw))
+
+
+reg_table <- modelsummary(
+  models,
+  title = "Resting and active pulse rates as a function of weight, exercise, and smoking habits among female and male students",
+  stars = TRUE,
+  # report only basic goodness-of-fit stats
+  gof_map = gm
+  )
+
+reg_table %>%
+  # column labels
+  add_header_above(c(" " = 1,
+                     "Resting Pulse" = 2,
+                     "Active Pulse" = 2,
+                     "Resting Pulse" = 2,
+                     "Active Pulse" = 2)
+                   ) %>%
+  add_header_above(c(" " = 1, 
+                     "Male" = 4, 
+                     "Female" = 4)
+                   ) %>% 
+  # footnote
+  add_footnote("Dataset: 'Pulse Rates and Exercise' from the Stat2Data package.",
+               notation = "none"
+  ) 
+
+
+
+```
+
+:::
+
+
+::: {.center data-latex=""}
+
+This content should be centered.
+
+:::
+
+
+If we are using `reproducr::reproducr_draft` as our output format, the content will be processed without the LaTeX related attribute.
+
+
+
+```{cat, write-bib-file, engine.opts=list(file = 'literature.bib')}
+
+@book{Xie.2020,
+  title={R Markdown Cookbook},
+  author={Xie, Yihui and Dervieux, Christophe and Riederer, Emily},
+  year={2020},
+  publisher={CRC Press}
+}
+
+
+@Manual{palmerdata.2020,
+  title = {palmerpenguins: Palmer Archipelago (Antarctica) penguin data},
+  author = {Allison Marie Horst and Alison Presmanes Hill and Kristen B Gorman},
+  year = {2020},
+  note = {R package version 0.1.0},
+  doi = {10.5281/zenodo.3960218},
+  url = {https://allisonhorst.github.io/palmerpenguins/},
+}
+
+
+@article{Knuth.1984,
+  title={Literate programming},
+  author={Knuth, Donald Ervin},
+  journal={The Computer Journal},
+  volume={27},
+  number={2},
+  pages={97--111},
+  year={1984},
+  publisher={Oxford University Press}
+}
+
+
+@Book{Wickham.2016,
+  author = {Hadley Wickham},
+  title = {ggplot2: Elegant Graphics for Data Analysis},
+  publisher = {Springer-Verlag New York},
+  year = {2016},
+  isbn = {978-3-319-24277-4},
+  url = {https://ggplot2.tidyverse.org},
+}
+
+
+@Book{Xie.2016,
+  title = {bookdown: Authoring Books and Technical Documents with {R} Markdown},
+  author = {Yihui Xie},
+  publisher = {Chapman and Hall/CRC},
+  address = {Boca Raton, Florida},
+  year = {2016},
+  note = {ISBN 978-1138700109},
+  url = {https://github.com/rstudio/bookdown},
+}
+
+
+@Manual{Qiu.2020,
+  title = {showtext: Using Fonts More Easily in R Graphs},
+  author = {Yixuan Qiu},
+  year = {2020},
+  note = {R package version 0.9-1},
+  url = {https://CRAN.R-project.org/package=showtext},
+}
+
+
+@Manual{Arel-Bundock.2020,
+  title = {modelsummary: Summary Tables and Plots for Statistical Models and Data: Beautiful, Customizable, and Publication-Ready},
+  author = {Vincent Arel-Bundock},
+  year = {2020},
+  note = {R package version 0.6.3},
+  url = {https://CRAN.R-project.org/package=modelsummary},
+}
+
+
+@Manual{Xie.2020a,
+  title = {DT: A Wrapper of the JavaScript Library 'DataTables'},
+  author = {Yihui Xie and Joe Cheng and Xianying Tan},
+  year = {2020},
+  note = {R package version 0.16},
+  url = {https://CRAN.R-project.org/package=DT},
+}
+
+```
+
+

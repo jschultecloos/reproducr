@@ -1,0 +1,115 @@
+template:
+  package: themepkgdown
+  params:
+    ganalytics: 263517228
+
+development:
+  mode: auto
+
+home:
+  strip_header: false
+
+
+navbar:
+  title: "reproducR"
+  type: inverse
+  structure:
+    left:
+    - intro
+    - drafting
+    - publishing
+    right:
+    - reference
+    - news
+    - github
+    - twitter
+    - home
+  components:
+    reference:
+      text: Reference
+      href: reference/index.html
+    github:
+      icon: fab fa-github fa-lg
+      href: https://github.com/jschultecloos/reproducr
+    twitter:
+      icon: "fab fa-twitter fa-lg"
+      href: https://twitter.com/jschultecloos
+    home:
+      icon: fas fa-home fa-lg
+      href: index.html
+    intro:
+      text: Intro
+      href: articles/reproducr#index.html
+      menu:
+        - text: The basics
+        - text: "Introduction"
+          href: articles/reproducr.html
+        - text: "Markdown syntax"
+          href: articles/reproducr.html#markdown-syntax-1
+        - text: "Code chunks"
+          href: articles/reproducr.html#code-chunks-1
+        - text: "YAML header"
+          href: articles/reproducr.html#yaml-header-1
+    drafting:
+      text: Explorative Stage
+      href: articles/reproducr.html#explorative-stage-1
+      menu:
+        - text: Interactive elements
+        - text: Interactive tables
+          href: articles/reproducr.html#explorative-data-analysis-1
+        - text: Interactive graphs
+          href: articles/reproducr.html#explorative-data-analysis-1
+        - text: Interactive maps
+          href: articles/reproducr.html#explorative-data-analysis-1
+        - text: Date stamps
+        - text: File names with date
+          href: articles/reproducr.html#date-stamps-1
+    publishing:
+      text: Dissemination Stage
+      href: articles/reproducr.html#dissemination-stage-1
+      menu:
+        - text: Scholarly author information
+        - text: Author affiliations
+          href: articles/reproducr.html#scholarly-author-information-1
+        - text: Correspondence
+          href: articles/reproducr.html#scholarly-author-information-1
+        - text: ORCID
+          href: articles/reproducr.html#scholarly-author-information-1
+        - text: Submission
+        - text: Blinded manuscript
+          href: articles/reproducr.html#blinded-manuscript-1
+        - text: Layout and fonts
+        - text: Layout
+          href: articles/reproducr.html#layout-and-fonts-1
+        - text: Integration of fonts
+          href: articles/reproducr.html#layout-and-fonts-1
+        - text: Bibliographies
+        - text: Main and appendix references
+          href: articles/reproducr.html#bibliography-and-reference-management-1
+        - text: Citation Language Styles (CSL)
+          href: articles/reproducr.html#bibliography-and-reference-management-1
+
+
+
+
+
+reference:
+- title: Output formats
+  desc: >
+    Specify the draft or manuscript output format in your document's YAML frontmatter
+    with `output_format:`
+  contents:
+  - '`reproducr_manuscript`'
+  - '`reproducr_draft`'
+- title: Custom knitting functions
+  desc: >
+    Specify the knitting function in your document's YAML frontmatter with
+    `knit:`
+  contents:
+  - '`knit_with_datestamp`'
+
+
+
+authors:
+  "Julia Schulte-Cloos":
+  href: https://jschultecloos.github.io
