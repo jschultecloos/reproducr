@@ -1,7 +1,7 @@
 template:
   package: themepkgdown
   params:
-    ganalytics: 263517228
+    ganalytics: "UA-106823123-2"
 
 development:
   mode: auto

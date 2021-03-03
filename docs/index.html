@@ -244,7 +244,7 @@
 <h2 class="hasAnchor">
 <a href="#flexible-output-formats" class="anchor"></a>Flexible output formats</h2>
 <p>The<code>reproducr</code> package offers you full flexibility to knit your document to a polished and well-formatted HTML that includes all your explorative analysis and dynamic research output. This feature is particularly useful while drafting a research paper or when writing up blog posts to communicate your results to a wider audience. At the same time, the <code>reproducr</code> package allows you to knit your document to a polished and submission-ready PDF manuscript which is optimised for scholarly use and can optionally be blinded for review.</p>
-<p>When writing your paper and your code, simply wrap the parts of the paper that are exclusive to one output format in three colons <code>::: {.not-in-format .latex}</code> closed by three more colons <code><a href="https://rdrr.io/r/base/ns-dblcolon.html">:::</a></code>. The respective part of the document wrapped in the <code>not-in-format</code> <code>div</code> structure will not be included in <span class="math inline">$\\LaTeX{}$</span> output.</p>
+<p>When writing your paper and your code, simply wrap the parts of the paper that are exclusive to one output format in three colons <code>::: {.not-in-format .latex}</code> closed by three more colons <code><a href="https://rdrr.io/r/base/ns-dblcolon.html">:::</a></code>. The respective part of the document wrapped in the <code>not-in-format</code> <code>div</code> structure will not be included in LaTeX output.</p>
 <p>You can also make the <strong>code evaluation</strong> conditional on the output format by asking <code>knitr</code> to conditionally evaluate your code only when the output is HTML: <code>eval=knitr::is_html_output()</code>.</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="sc">:::</span> {.not<span class="sc">-</span><span class="cf">in</span><span class="sc">-</span>format .latex}</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -298,7 +298,7 @@
 <div class="developers">
 <h2>Developers</h2>
 <ul class="list-unstyled">
-<li>Julia Schulte-Cloos <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/https://orcid.org/0000-0001-7223-3602" target="orcid.widget" aria-label="ORCID"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
+<li>Julia Schulte-Cloos <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0001-7223-3602" target="orcid.widget" aria-label="ORCID"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
 </ul>
 </div>
 

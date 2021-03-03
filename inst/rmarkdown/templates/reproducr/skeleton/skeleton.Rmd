@@ -48,7 +48,6 @@ pacman::p_load(
   kableExtra,
   palmerpenguins, 
   DT, 
-  leaflet, 
   ggiraph, 
   showtext)
 
@@ -266,6 +265,16 @@ reg_table %>%
 
 # Appendix 
 
+
+
+## Another blindtext section {#short-blindtext .not-in-format .html}
+
+```{=latex}
+
+\lipsum[1-3]
+
+```
+
 ## Advanced literate programming
 
 ### Literate programming in figure captions
@@ -366,7 +375,9 @@ reg_table %>%
   # footnote
   add_footnote("Dataset: 'Pulse Rates and Exercise' from the Stat2Data package.",
                notation = "none"
-  ) 
+  ) %>%
+  # enforce the float position of the table with [!h]
+  kable_styling(latex_options = "hold_position")
 
 
 

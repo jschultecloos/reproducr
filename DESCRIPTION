@@ -7,7 +7,7 @@ Authors@R:
            family = "Schulte-Cloos",
            role = c("aut", "cre"),
            email = "julia.schulte@lmu.de",
-           comment = c(ORCID = "https://orcid.org/0000-0001-7223-3602"))
+           comment = c(ORCID = "0000-0001-7223-3602"))
 Description: The `reproducr` package allows users without any prior knowledge of R Markdown to implement reproducible research practices in their scientific workflows. It provides an integrated Rmd-framework that is fully optimized for the explorative research stage and the research dissemination stage.
 SystemRequirements: pandoc (>= 1.14) - http://pandoc.org
 URL: https://github.com/jschultecloos/reproducr
@@ -17,7 +17,15 @@ Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
-Imports: bookdown, stringi, utils, here, xfun, rmarkdown, ragg, yaml
+Imports: 
+    bookdown,
+    utils,
+    here,
+    xfun,
+    rmarkdown (>= 2.4),
+    ragg,
+    yaml,
+    pacman
 Suggests: testthat (>= 3.0.0)
 Config/testthat/edition: 3
 NeedsCompilation: no

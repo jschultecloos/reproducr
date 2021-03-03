@@ -109,7 +109,7 @@ When writing your paper and your code, simply wrap the parts of the
 paper that are exclusive to one output format in three colons
 `::: {.not-in-format .latex}` closed by three more colons `:::`. The
 respective part of the document wrapped in the `not-in-format` `div`
-structure will not be included in $\\LaTeX{}$ output.
+structure will not be included in LaTeX output.
 
 You can also make the **code evaluation** conditional on the output
 format by asking `knitr` to conditionally evaluate your code only when
