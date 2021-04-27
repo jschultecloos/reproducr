@@ -11,6 +11,8 @@
 #'   graphs.
 #' @param dev Graphics device to use for figure output (defaults to 'ragg_png')
 #'   from the \pkg{ragg} package
+#' @param toc Table of contents (defaults to `FALSE`).
+#' @param toc_depth Depth of headers to include in table of contents (defaults to 3).
 #' @param toc_float Float the table of contents to the left when the article
 #'   is displayed at widths > 1000px. If set to `FALSE` or the width is less
 #'   than 1000px the table of contents will be placed above the article body.
@@ -28,6 +30,7 @@
 #'   highlighting.
 #' @param highlight_downlit Use the \pkg{downlit} package to highlight
 #'   R code (including providing hyperlinks to function documentation).
+#' @param keep_md Keep the markdown file that is generated in the knitting process? (defaults to `FALSE`)
 #'
 #' @import rmarkdown
 #'

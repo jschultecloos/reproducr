@@ -25,8 +25,20 @@ Imports:
     rmarkdown (>= 2.4),
     ragg,
     yaml,
-    pacman
-Suggests: testthat (>= 3.0.0)
+    pacman,
+    lubridate,
+    distill,
+    tinytex
+Suggests: 
+    testthat (>= 3.0.0),
+    tidyverse, 
+    modelsummary, 
+    kableExtra, 
+    DT, 
+    ggiraph, 
+    showtext, 
+    ggplot2, 
+    palmerpenguins
 Config/testthat/edition: 3
 NeedsCompilation: no
 Packaged: 2021-02-26 10:39:25 UTC; jsc

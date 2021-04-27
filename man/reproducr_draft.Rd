@@ -32,6 +32,10 @@ reproducr_draft(
 )
 }
 \arguments{
+\item{toc}{Table of contents (defaults to \code{FALSE}).}
+
+\item{toc_depth}{Depth of headers to include in table of contents (defaults to 3).}
+
 \item{toc_float}{Float the table of contents to the left when the article
 is displayed at widths > 1000px. If set to \code{FALSE} or the width is less
 than 1000px the table of contents will be placed above the article body.}
@@ -62,6 +66,8 @@ highlighting.}
 
 \item{highlight_downlit}{Use the \pkg{downlit} package to highlight
 R code (including providing hyperlinks to function documentation).}
+
+\item{keep_md}{Keep the markdown file that is generated in the knitting process? (defaults to \code{FALSE})}
 }
 \description{
 Creating and publishing reproducible scientific documents in draft (HTML) mode
