@@ -222,20 +222,19 @@ models <- list(
 )
 
 # report only basic goodness-of-fit statistics
-gm <- gof_map %>%
-  mutate(omit = case_when(
-    raw == "r.squared" | raw == "nobs" ~ FALSE,
-    TRUE ~ TRUE)
-  ) %>%
-  arrange(desc(raw))
-
+round_function <- function(x) format(round(x, 3))
+gm <- list(
+  list("raw" = "r.squared", "clean" = "R$^2$", "fmt" = round_function),
+  list("raw" = "nobs", "clean" = "Num.Obs.", "fmt" = round_function)
+  )
 
 reg_table <- modelsummary(
   models,
   title = "Resting and active pulse rates as a function of sex, weight, exercise, and smoking habits among students",
   stars = TRUE,
   # report only basic goodness-of-fit stats
-  gof_map = gm
+  gof_map = gm, 
+  escape = FALSE
   )
 
 reg_table %>%
@@ -344,12 +343,11 @@ models <- list(
 
 
 # report only basic goodness-of-fit statistics
-gm <- gof_map %>%
-  mutate(omit = case_when(
-    raw == "r.squared" | raw == "nobs" ~ FALSE,
-    TRUE ~ TRUE)
-  ) %>%
-  arrange(desc(raw))
+round_function <- function(x) format(round(x, 3))
+gm <- list(
+  list("raw" = "r.squared", "clean" = "R$^2$", "fmt" = round_function),
+  list("raw" = "nobs", "clean" = "Num.Obs.", "fmt" = round_function)
+  )
 
 
 reg_table <- modelsummary(
@@ -357,7 +355,8 @@ reg_table <- modelsummary(
   title = "Resting and active pulse rates as a function of weight, exercise, and smoking habits among female and male students",
   stars = TRUE,
   # report only basic goodness-of-fit stats
-  gof_map = gm
+  gof_map = gm, 
+  escape = FALSE
   )
 
 reg_table %>%
