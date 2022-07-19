@@ -10,7 +10,7 @@ author:
     orcid_id: 0000-1111-1111-0000
 institute:
   - gsilmu:
-      name: Geschwister Scholl Institute of Political Science, Ludwig Maxmilian University of Munich, Germany.
+      name: Robert Schuman Center for Advanced Studies, European University Institute.
   - reprouniversity:
       name: Reproducible University.
 documentclass: 'scrartcl'
@@ -117,11 +117,11 @@ ggplot_font = "Fira Sans"
 
 ## add a font from google fonts
 font_add_google(
-  name = "Crimson Text",
-  family = "Crimson Text"
+  name = "Alegreya Sans",
+  family = "Alegreya Sans"
   )
 
-ggplot_font = "Crimson Text"
+ggplot_font = "Alegreya Sans"
 
 ```
 
@@ -207,7 +207,7 @@ girafe(ggobj = scatter_mass_flipper,
 
 url <- 'https://vincentarelbundock.github.io/Rdatasets/csv/Stat2Data/Pulse.csv'
 pulse_data <- read_csv(url) %>%
-  select(-X1)
+  select(-c(1))
 
 
 models <- list(

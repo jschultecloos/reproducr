@@ -33,6 +33,7 @@
 #' @param keep_md Keep the markdown file that is generated in the knitting process? (defaults to `FALSE`)
 #'
 #' @import rmarkdown
+#' @import distill
 #'
 #' @export
 #' @examples
@@ -68,9 +69,8 @@ reproducr_draft <- function(toc = FALSE,
                             ...) {
 
 
-
   # call the base distill_article format with the appropriate options
-  format = distill::distill_article(
+  format <- distill::distill_article(
     toc = toc,
     toc_depth = toc_depth,
     toc_float = toc_float,
@@ -97,16 +97,15 @@ reproducr_draft <- function(toc = FALSE,
 
 
   # Lua filters
-  format$pandoc$lua_filters = c(
+  format$pandoc$lua_filters <- c(
     lua_filter("not-in-format.lua"),
     format$pandoc$lua_filters
   )
 
-
   # Knitr options
-  format$knitr$opts_chunk$echo = TRUE
-  format$knitr$opts_chunk$fig.path = 'figs/fig-'
-  format$knitr$opts_chunk$fig.showtext = fig_showtext
+  format$knitr$opts_chunk$echo <- TRUE
+  format$knitr$opts_chunk$fig.path <- 'figs/fig-'
+  format$knitr$opts_chunk$fig.showtext <- fig_showtext
   format$knitr$opts_chunk$dev <- dev
   format$knitr$opts_chunk$fig.retina <- fig_retina
 

@@ -1,12 +1,12 @@
 Package: reproducr
 Title: Drafting and Publishing Reproducible Scientific Articles with R
         Markdown
-Version: 0.1.0
+Version: 0.1.1
 Authors@R: 
     person(given = "Julia",
            family = "Schulte-Cloos",
            role = c("aut", "cre"),
-           email = "julia.schulte@lmu.de",
+           email = "julia.schulte-cloos@eui.eu",
            comment = c(ORCID = "0000-0001-7223-3602"))
 Description: The `reproducr` package allows users without any prior knowledge of R Markdown to implement reproducible research practices in their scientific workflows. It provides an integrated Rmd-framework that is fully optimized for the explorative research stage and the research dissemination stage.
 SystemRequirements: pandoc (>= 1.14) - http://pandoc.org
@@ -17,18 +17,22 @@ Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
+Depends:
+    R (>= 3.5.0)
 Imports: 
     bookdown,
     utils,
     here,
     xfun,
     rmarkdown (>= 2.4),
+    markdown,
     ragg,
     yaml,
     pacman,
     lubridate,
     distill,
-    tinytex
+    tinytex, 
+    formatR
 Suggests: 
     testthat (>= 3.0.0),
     tidyverse, 
@@ -41,7 +45,6 @@ Suggests:
     palmerpenguins
 Config/testthat/edition: 3
 NeedsCompilation: no
-Packaged: 2021-02-26 10:39:25 UTC; jsc
 Author: Julia Schulte-Cloos [aut, cre]
     (<https://orcid.org/0000-0001-7223-3602>)
 Maintainer: Julia Schulte-Cloos <julia.schulte@lmu.de>

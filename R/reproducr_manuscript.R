@@ -40,7 +40,7 @@
 #' rmarkdown::render("reproducr-file.Rmd", "reproducr::reproducr_manuscript")
 #' }
 
-reproducr_manuscript = function(
+reproducr_manuscript <- function(
   blinded = FALSE,
   toc = FALSE,
   number_sections = FALSE,
@@ -58,72 +58,73 @@ reproducr_manuscript = function(
 ) {
 
 
-
   # resolve default highlight
-  if (identical(highlight, 'default')) highlight = 'tango'
+  if (identical(highlight, 'default')) highlight <- 'tango'
 
 
   # call the base pdf_document format with the appropriate options
-  format = bookdown::pdf_document2(
+  format <- bookdown::pdf_document2(
     toc = toc,
     number_sections = number_sections,
     fig_width = fig_width, fig_height = fig_height, fig_crop = fig_crop,
-    dev = dev, highlight = highlight, ...
+    dev = dev, highlight = highlight,
   )
 
 
 
   # add the preamble and the docprefix
-  format$pandoc$args = c(format$pandoc$args,
-    '--include-in-header', latex_files("reproducr_preamble.tex"),
-    '--include-before-body', latex_files("reproducr_docprefix.tex")
-    )
+  format$pandoc$args <- c(format$pandoc$args,
+                          '--include-in-header', latex_files("reproducr_preamble.tex"),
+                          '--include-before-body', latex_files("reproducr_docprefix.tex")
+  )
 
 
   # Lua filters
-  # append the additional Lua filters to the filters integrated in Rmd
+  format$pandoc$lua_filters <- c(
+    format$pandoc$lua_filters,
+    lua_filter("not-in-format.lua"),
+    lua_filter("abstract-to-meta.lua"),
+    lua_filter("section-refs.lua")
+  )
+
+  # scholarly meta information only if blinded = FALSE
   if (isFALSE(blinded)) {
-    format$pandoc$lua_filters = c(
+    format$pandoc$lua_filters <- c(
       format$pandoc$lua_filters,
-      lua_filter("not-in-format.lua"),
       lua_filter("scholarly-metadata.lua"),
-      lua_filter("author-info-blocks.lua"),
-      lua_filter("section-refs.lua"),
-      lua_filter("abstract-to-meta.lua")
+      lua_filter("author-info-blocks.lua")
     )
   } else if (isTRUE(blinded)) {
-    format$pandoc$lua_filters = c(
+    format$pandoc$lua_filters <- c(
       format$pandoc$lua_filters,
-      lua_filter("not-in-format.lua"),
-      lua_filter("blinded.lua"),
-      lua_filter("section-refs.lua"),
-      lua_filter("abstract-to-meta.lua")
+      lua_filter("blinded.lua")
     )
   }
 
 
+
   # create knitr options (ensure opts and hooks are non-null)
-  knitr_options = rmarkdown::knitr_options_pdf(fig_width, fig_height, fig_crop, dev)
-  if (is.null(knitr_options$opts_knit))  knitr_options$opts_knit = list()
-  if (is.null(knitr_options$knit_hooks)) knitr_options$knit_hooks = list()
+  knitr_options <- rmarkdown::knitr_options_pdf(fig_width, fig_height, fig_crop, dev)
+  if (is.null(knitr_options$opts_knit))  knitr_options$opts_knit <- list()
+  if (is.null(knitr_options$knit_hooks)) knitr_options$knit_hooks <- list()
 
 
   # set options
-  knitr_options$opts_chunk$echo = FALSE
-  knitr_options$opts_chunk$tidy = TRUE
-  knitr_options$opts_chunk$message = FALSE
-  knitr_options$opts_chunk$warning <- FALSE
-  knitr_options$opts_chunk$dev <- dev
-  knitr_options$opts_chunk$dpi <- dpi
-  knitr_options$opts_chunk$fig.path = 'figs/fig-'
-  knitr_options$opts_chunk$fig.showtext <- fig_showtext
-  knitr_options$opts_chunk$fig.align <- fig_align
-
-
+  knitr_options$opts_chunk <- list(
+    echo = FALSE,
+    tidy = TRUE,
+    message = FALSE,
+    warning = FALSE,
+    dev = dev,
+    dpi = dpi,
+    fig.path = 'figs/fig-',
+    fig.showtext = fig_showtext,
+    fig.align = fig_align
+  )
 
   # override the knitr settings of the base format and return the format
-  format$knitr = knitr_options
-  format$inherits = 'pdf_document'
+  format$knitr <- knitr_options
+  format$inherits <- 'pdf_document'
   format
 
 

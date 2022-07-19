@@ -4,7 +4,7 @@
 
 
 # reproducr Lua filters paths
-lua_filter = function (filters = NULL) {
+lua_filter <- function (filters = NULL) {
   rmarkdown::pkg_file_lua(filters, package = 'reproducr')
 }
 
@@ -45,7 +45,7 @@ pkg_file_latex <- function (latexfiles = NULL,
 
 
 # reproducr LaTeX filters paths
-latex_files = function (latexfiles = NULL) {
+latex_files <- function (latexfiles = NULL) {
   pkg_file_latex(latexfiles, package = 'reproducr')
 }
 
